@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Copy, CheckCircle, Upload, Code, Github, Home, Zap, Shield, Globe } from 'lucide-react';
+import { Copy, CheckCircle, Upload, Code, ExternalLink, Github, Home, Zap, Star, Shield, Globe, ArrowRight } from 'lucide-react';
 
 export default function APIDocumentation() {
     const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -350,7 +350,7 @@ print(result)`;
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Link
-                                href="/#upload"
+                                href="/"
                                 className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors font-medium"
                             >
                                 <Upload className="h-4 w-4 mr-2" />

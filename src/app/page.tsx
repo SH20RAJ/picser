@@ -89,7 +89,7 @@ export default function Home() {
         </div>
       </section>
 
-      <div className="pb-16">
+      <div id='upload' className="pb-16">
         <div className="container mx-auto px-6">
           <ImageUploader onUpload={handleNewUpload} />
           <UploadHistory key={refreshHistory} onNewUpload={() => setRefreshHistory(prev => prev + 1)} />
