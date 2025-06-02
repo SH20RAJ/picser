@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
             github: `https://github.com/${owner}/${repo}/blob/${branch}/${filename}`,
             raw: `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`,
             jsdelivr: `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${branch}/${filename}`,
-            
+
             // Commit-based URLs (permanent)
             github_commit: `https://github.com/${owner}/${repo}/blob/${commitSha}/${filename}`,
             raw_commit: `https://raw.githubusercontent.com/${owner}/${repo}/${commitSha}/${filename}`,

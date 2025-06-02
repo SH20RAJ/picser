@@ -2,7 +2,7 @@
 
 import { useState, useCallback } from 'react';
 import Image from 'next/image';
-import { Upload, Copy, ExternalLink, CheckCircle, AlertCircle } from 'lucide-react';
+import { Upload, Copy, ExternalLink, CheckCircle, AlertCircle, Zap, Star, Link as LinkIcon } from 'lucide-react';
 import { saveToHistory } from '@/utils/storage';
 
 interface UploadResult {
@@ -39,7 +39,7 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
     const [uploadResult, setUploadResult] = useState<UploadResult | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [previewFile, setPreviewFile] = useState<PreviewFile | null>(null);
-    const [copySuccess, setCopySuccess] = useState(false);
+    const [copiedUrl, setCopiedUrl] = useState<string | null>(null);
 
     const handleUpload = useCallback(async (file: File) => {
         setUploading(true);
@@ -63,13 +63,14 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
 
             if (result.success) {
                 setUploadResult(result);
-                // Save to history
+                // Save to history with jsDelivr CDN URL as primary
                 saveToHistory({
                     filename: result.filename,
-                    url: result.url,
+                    url: result.urls?.jsdelivr_commit || result.url,
                     github_url: result.github_url,
                     size: result.size,
                     type: result.type,
+                    urls: result.urls,
                 });
                 // Notify parent component
                 onUpload?.();
@@ -105,27 +106,39 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
         e.stopPropagation();
         setIsDragging(false);
 
-        const files = Array.from(e.dataTransfer.files);
-        if (files.length > 0) {
+        const files = e.dataTransfer.files;
+        if (files && files.length > 0) {
+            const file = files[0];
+            if (file.type.startsWith('image/')) {
+                handleUpload(file);
+            } else {
+                setError('Please select an image file');
+            }
+        }
+    }, [handleUpload]);
+
+    const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files && files.length > 0) {
             handleUpload(files[0]);
         }
     }, [handleUpload]);
 
-    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            handleUpload(file);
-        }
-    };
-
     const copyToClipboard = async (text: string) => {
         try {
             await navigator.clipboard.writeText(text);
-            setCopySuccess(true);
-            setTimeout(() => setCopySuccess(false), 2000);
+            setCopiedUrl(text);
+            setTimeout(() => setCopiedUrl(null), 2000);
         } catch (err) {
             console.error('Failed to copy:', err);
         }
+    };
+
+    const resetUpload = () => {
+        setUploadResult(null);
+        setError(null);
+        setPreviewFile(null);
+        setCopiedUrl(null);
     };
 
     const formatFileSize = (bytes: number) => {
@@ -136,295 +149,104 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
 
-    const reset = () => {
-        setUploadResult(null);
-        setError(null);
-        setPreviewFile(null);
-        setCopySuccess(false);
-    };
-
     return (
-        <div className="max-w-2xl mx-auto p-6">
-            <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                    Image Upload to GitHub
-                </h1>
-                <p className="text-gray-600">
-                    Upload images and get shareable URLs hosted on GitHub
-                </p>
-            </div>
+        <div className="max-w-4xl mx-auto">
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-slate-200/50 p-8">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-2xl mb-4">
+                        <Upload className="h-8 w-8 text-white" />
+                    </div>
+                    <h1 className="text-3xl font-bold text-slate-900 mb-2">
+                        Upload Your Images
+                    </h1>
+                    <p className="text-slate-600 text-lg">
+                        Get instant CDN URLs via jsDelivr with global caching and permanent links
+                    </p>
+                </div>
 
-            {!uploadResult && !error && (
-                <div>
-                    {previewFile && (
-                        <div className="mb-6 text-center">
+                {error && (
+                    <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-xl">
+                        <div className="flex items-center">
+                            <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
+                            <p className="text-red-700 font-medium">{error}</p>
+                        </div>
+                    </div>
+                )}
+
+                {uploadResult ? (
+                    <div className="space-y-6">
+                        {/* Success Message */}
+                        <div className="text-center">
+                            <div className="inline-flex items-center justify-center w-12 h-12 bg-green-100 rounded-full mb-4">
+                                <CheckCircle className="h-6 w-6 text-green-600" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-slate-900 mb-2">Upload Successful!</h3>
+                            <p className="text-slate-600">Your image is now available on the global CDN</p>
+                        </div>
+
+                        {/* Image Preview */}
+                        <div className="text-center">
                             <div className="inline-block relative">
                                 <Image
-                                    src={previewFile.url}
-                                    alt="Preview"
+                                    src={uploadResult.urls?.jsdelivr_commit || uploadResult.url}
+                                    alt="Uploaded image"
                                     width={300}
                                     height={200}
-                                    className="max-w-xs max-h-48 rounded-lg shadow-md object-contain"
+                                    className="max-w-sm max-h-64 rounded-xl shadow-lg object-contain border border-slate-200"
                                     unoptimized
                                 />
-                                {uploading && (
-                                    <div className="absolute inset-0 bg-black bg-opacity-50 rounded-lg flex items-center justify-center">
-                                        <div className="text-white text-center">
-                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto mb-2"></div>
-                                            <p className="text-sm">Uploading...</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                            <p className="text-sm text-gray-600 mt-2">{previewFile.file.name}</p>
-                        </div>
-                    )}
-
-                    <div
-                        className={`
-              relative border-2 border-dashed rounded-lg p-8 text-center transition-colors
-              ${isDragging
-                                ? 'border-blue-400 bg-blue-50'
-                                : 'border-gray-300 hover:border-gray-400'
-                            }
-              ${uploading ? 'pointer-events-none opacity-50' : ''}
-            `}
-                        onDragEnter={handleDragIn}
-                        onDragLeave={handleDragOut}
-                        onDragOver={handleDrag}
-                        onDrop={handleDrop}
-                    >
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileSelect}
-                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                            disabled={uploading}
-                        />
-
-                        <Upload className="mx-auto h-12 w-12 text-gray-400 mb-4" />
-
-                        {uploading ? (
-                            <div>
-                                <p className="text-lg text-gray-600">Uploading to GitHub...</p>
-                                <p className="text-sm text-gray-500 mt-1">Please wait while your image is being uploaded</p>
-                            </div>
-                        ) : (
-                            <div>
-                                <p className="text-lg text-gray-600 mb-2">
-                                    {previewFile ? 'Upload another image' : 'Drop your image here or click to browse'}
-                                </p>
-                                <p className="text-sm text-gray-500">
-                                    Supports: JPG, PNG, GIF, WebP (Max 10MB)
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-            )}
-
-            {error && (
-                <div className="bg-red-50 border border-red-200 rounded-lg p-6">
-                    <div className="flex items-center">
-                        <AlertCircle className="h-5 w-5 text-red-500 mr-2" />
-                        <h3 className="text-red-800 font-medium">Upload Failed</h3>
-                    </div>
-                    <p className="text-red-700 mt-2">{error}</p>
-                    <button
-                        onClick={reset}
-                        className="mt-4 px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 transition-colors"
-                    >
-                        Try Again
-                    </button>
-                </div>
-            )}
-
-            {uploadResult && (
-                <div className="bg-green-50 border border-green-200 rounded-lg p-6">
-                    <div className="flex items-center mb-4">
-                        <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
-                        <h3 className="text-green-800 font-medium">Upload Successful!</h3>
-                    </div>
-
-                    {uploadResult.url && (
-                        <div className="mb-4 text-center">
-                            <Image
-                                src={uploadResult.url}
-                                alt="Uploaded image"
-                                width={200}
-                                height={150}
-                                className="max-w-xs max-h-32 rounded-lg shadow-md object-contain mx-auto"
-                                unoptimized
-                            />
-                        </div>
-                    )}
-
-                    <div className="space-y-4">
-                        {uploadResult.urls ? (
-                            <div className="space-y-3">
-                                <h4 className="text-sm font-medium text-gray-700 mb-3">Available URL Types:</h4>
-                                
-                                {/* Branch-based URLs */}
-                                <div className="border-l-4 border-blue-500 pl-3">
-                                    <h5 className="text-xs font-medium text-blue-700 mb-2">Branch-based URLs (may change)</h5>
-                                    
-                                    <div className="space-y-2">
-                                        <div>
-                                            <label className="block text-xs text-gray-600 mb-1">GitHub URL:</label>
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    value={uploadResult.urls.github}
-                                                    readOnly
-                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
-                                                />
-                                                <button
-                                                    onClick={() => copyToClipboard(uploadResult.urls!.github)}
-                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                                                    title="Copy GitHub URL"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-xs text-gray-600 mb-1">Raw URL:</label>
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    value={uploadResult.urls.raw}
-                                                    readOnly
-                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
-                                                />
-                                                <button
-                                                    onClick={() => copyToClipboard(uploadResult.urls!.raw)}
-                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                                                    title="Copy Raw URL"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-xs text-gray-600 mb-1">JSDelivr CDN URL:</label>
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    value={uploadResult.urls.jsdelivr}
-                                                    readOnly
-                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
-                                                />
-                                                <button
-                                                    onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr)}
-                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                                                    title="Copy JSDelivr URL"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Commit-based URLs */}
-                                <div className="border-l-4 border-green-500 pl-3">
-                                    <h5 className="text-xs font-medium text-green-700 mb-2">Commit-based URLs (permanent)</h5>
-                                    
-                                    <div className="space-y-2">
-                                        <div>
-                                            <label className="block text-xs text-gray-600 mb-1">GitHub URL (Commit):</label>
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    value={uploadResult.urls.github_commit}
-                                                    readOnly
-                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
-                                                />
-                                                <button
-                                                    onClick={() => copyToClipboard(uploadResult.urls!.github_commit)}
-                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                                                    title="Copy GitHub Commit URL"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-xs text-gray-600 mb-1">Raw URL (Commit):</label>
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    value={uploadResult.urls.raw_commit}
-                                                    readOnly
-                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
-                                                />
-                                                <button
-                                                    onClick={() => copyToClipboard(uploadResult.urls!.raw_commit)}
-                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                                                    title="Copy Raw Commit URL"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="block text-xs text-gray-600 mb-1">JSDelivr CDN URL (Commit):</label>
-                                            <div className="flex items-center space-x-2">
-                                                <input
-                                                    type="text"
-                                                    value={uploadResult.urls.jsdelivr_commit}
-                                                    readOnly
-                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
-                                                />
-                                                <button
-                                                    onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr_commit)}
-                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
-                                                    title="Copy JSDelivr Commit URL"
-                                                >
-                                                    <Copy className="h-3 w-3" />
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
+                                <div className="absolute top-2 right-2 bg-green-500 text-white px-2 py-1 rounded-full text-xs font-medium">
+                                    CDN Ready
                                 </div>
                             </div>
-                        ) : (
-                            // Fallback for old format
-                            <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">
-                                    Image URL:
-                                </label>
-                                <div className="flex items-center space-x-2">
+                            <div className="mt-3 text-sm text-slate-600">
+                                <p className="font-medium">{uploadResult.filename}</p>
+                                <p>{formatFileSize(uploadResult.size)} • {uploadResult.type}</p>
+                            </div>
+                        </div>
+
+                        {/* Primary CDN URL */}
+                        {uploadResult.urls?.jsdelivr_commit && (
+                            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200">
+                                <div className="flex items-center mb-3">
+                                    <div className="flex items-center space-x-2">
+                                        <Zap className="h-5 w-5 text-blue-600" />
+                                        <h4 className="font-semibold text-blue-900">Recommended: jsDelivr CDN URL</h4>
+                                    </div>
+                                    <Star className="h-4 w-4 text-yellow-500 ml-2" />
+                                </div>
+                                <p className="text-sm text-blue-700 mb-4">
+                                    ⚡ Lightning fast global CDN • 🔒 Permanent commit-based URL • 📈 Heavy caching
+                                </p>
+                                <div className="flex items-center space-x-3">
                                     <input
                                         type="text"
-                                        value={uploadResult.url}
+                                        value={uploadResult.urls.jsdelivr_commit}
                                         readOnly
-                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
+                                        className="flex-1 px-4 py-3 border border-blue-300 rounded-lg text-sm bg-white/80 font-mono text-slate-800"
                                     />
                                     <button
-                                        onClick={() => copyToClipboard(uploadResult.url)}
-                                        className={`p-2 transition-colors ${copySuccess
-                                                ? 'text-green-600 hover:text-green-700'
-                                                : 'text-gray-500 hover:text-gray-700'
-                                            }`}
-                                        title={copySuccess ? "Copied!" : "Copy URL"}
+                                        onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr_commit)}
+                                        className="flex items-center space-x-2 px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                                     >
-                                        {copySuccess ? (
-                                            <CheckCircle className="h-4 w-4" />
+                                        {copiedUrl === uploadResult.urls.jsdelivr_commit ? (
+                                            <>
+                                                <CheckCircle className="h-4 w-4" />
+                                                <span>Copied!</span>
+                                            </>
                                         ) : (
-                                            <Copy className="h-4 w-4" />
+                                            <>
+                                                <Copy className="h-4 w-4" />
+                                                <span>Copy</span>
+                                            </>
                                         )}
                                     </button>
                                     <a
-                                        href={uploadResult.url}
+                                        href={uploadResult.urls.jsdelivr_commit}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                                        title="Open in new tab"
+                                        className="p-3 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
                                     >
                                         <ExternalLink className="h-4 w-4" />
                                     </a>
@@ -432,40 +254,188 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
                             </div>
                         )}
 
-                        <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <span className="font-medium text-gray-700">Filename:</span>
-                                <p className="text-gray-600">{uploadResult.filename}</p>
-                            </div>
-                            <div>
-                                <span className="font-medium text-gray-700">Size:</span>
-                                <p className="text-gray-600">{formatFileSize(uploadResult.size)}</p>
+                        {/* Alternative URLs */}
+                        <div className="space-y-4">
+                            <h4 className="font-semibold text-slate-900 flex items-center">
+                                <LinkIcon className="h-4 w-4 mr-2" />
+                                Alternative URLs
+                            </h4>
+
+                            <div className="grid gap-4">
+                                {/* Raw GitHub URL (Commit-based) */}
+                                {uploadResult.urls?.raw_commit && (
+                                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-medium text-slate-700">Raw GitHub URL (Permanent)</span>
+                                            <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Permanent</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <input
+                                                type="text"
+                                                value={uploadResult.urls.raw_commit}
+                                                readOnly
+                                                className="flex-1 px-3 py-2 border border-slate-300 rounded text-xs bg-white font-mono"
+                                            />
+                                            <button
+                                                onClick={() => copyToClipboard(uploadResult.urls!.raw_commit)}
+                                                className="p-2 text-slate-500 hover:text-slate-700 transition-colors"
+                                            >
+                                                {copiedUrl === uploadResult.urls.raw_commit ? (
+                                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                                ) : (
+                                                    <Copy className="h-4 w-4" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* jsDelivr Branch URL */}
+                                {uploadResult.urls?.jsdelivr && (
+                                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-medium text-slate-700">jsDelivr CDN (Branch-based)</span>
+                                            <span className="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full">Dynamic</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <input
+                                                type="text"
+                                                value={uploadResult.urls.jsdelivr}
+                                                readOnly
+                                                className="flex-1 px-3 py-2 border border-slate-300 rounded text-xs bg-white font-mono"
+                                            />
+                                            <button
+                                                onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr)}
+                                                className="p-2 text-slate-500 hover:text-slate-700 transition-colors"
+                                            >
+                                                {copiedUrl === uploadResult.urls.jsdelivr ? (
+                                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                                ) : (
+                                                    <Copy className="h-4 w-4" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* GitHub URL */}
+                                {uploadResult.urls?.github_commit && (
+                                    <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+                                        <div className="flex items-center justify-between mb-2">
+                                            <span className="text-sm font-medium text-slate-700">GitHub Repository URL</span>
+                                            <span className="text-xs bg-slate-100 text-slate-700 px-2 py-1 rounded-full">Source</span>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <input
+                                                type="text"
+                                                value={uploadResult.urls.github_commit}
+                                                readOnly
+                                                className="flex-1 px-3 py-2 border border-slate-300 rounded text-xs bg-white font-mono"
+                                            />
+                                            <button
+                                                onClick={() => copyToClipboard(uploadResult.urls!.github_commit)}
+                                                className="p-2 text-slate-500 hover:text-slate-700 transition-colors"
+                                            >
+                                                {copiedUrl === uploadResult.urls.github_commit ? (
+                                                    <CheckCircle className="h-4 w-4 text-green-600" />
+                                                ) : (
+                                                    <Copy className="h-4 w-4" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
-                        {uploadResult.github_url && (
-                            <div>
-                                <a
-                                    href={uploadResult.github_url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm"
-                                >
-                                    View on GitHub
-                                    <ExternalLink className="h-3 w-3 ml-1" />
-                                </a>
+                        {/* Upload Another Button */}
+                        <div className="text-center pt-4">
+                            <button
+                                onClick={resetUpload}
+                                className="px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
+                            >
+                                Upload Another Image
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    <div>
+                        {previewFile && (
+                            <div className="mb-8 text-center">
+                                <div className="inline-block relative">
+                                    <Image
+                                        src={previewFile.url}
+                                        alt="Preview"
+                                        width={300}
+                                        height={200}
+                                        className="max-w-sm max-h-64 rounded-xl shadow-lg object-contain border border-slate-200"
+                                        unoptimized
+                                    />
+                                    {uploading && (
+                                        <div className="absolute inset-0 bg-black/50 backdrop-blur-sm rounded-xl flex items-center justify-center">
+                                            <div className="text-white text-center">
+                                                <div className="animate-spin rounded-full h-10 w-10 border-2 border-white border-t-transparent mx-auto mb-3"></div>
+                                                <p className="font-medium">Uploading to GitHub...</p>
+                                                <p className="text-sm opacity-90">Generating CDN URLs</p>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
+                                <p className="text-sm text-slate-600 mt-3 font-medium">{previewFile.file.name}</p>
                             </div>
                         )}
-                    </div>
 
-                    <button
-                        onClick={reset}
-                        className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-                    >
-                        Upload Another Image
-                    </button>
-                </div>
-            )}
+                        <div
+                            className={`
+                                relative border-2 border-dashed rounded-2xl p-12 text-center transition-all duration-200
+                                ${isDragging
+                                    ? 'border-blue-400 bg-blue-50/50 scale-105'
+                                    : 'border-slate-300 hover:border-blue-400 hover:bg-blue-50/30'
+                                }
+                                ${uploading ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                            `}
+                            onDragEnter={handleDragIn}
+                            onDragLeave={handleDragOut}
+                            onDragOver={handleDrag}
+                            onDrop={handleDrop}
+                        >
+                            <input
+                                type="file"
+                                accept="image/*"
+                                onChange={handleFileSelect}
+                                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                disabled={uploading}
+                            />
+
+                            <div className="space-y-4">
+                                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-100 to-indigo-100 rounded-2xl">
+                                    <Upload className="h-8 w-8 text-blue-600" />
+                                </div>
+
+                                <div>
+                                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                                        {isDragging ? 'Drop your image here' : 'Drag & drop or click to upload'}
+                                    </h3>
+                                    <p className="text-slate-600">
+                                        Supports JPG, PNG, GIF, WebP up to 10MB
+                                    </p>
+                                </div>
+
+                                <div className="flex items-center justify-center space-x-6 text-sm text-slate-500">
+                                    <div className="flex items-center space-x-1">
+                                        <Zap className="h-4 w-4" />
+                                        <span>CDN Powered</span>
+                                    </div>
+                                    <div className="flex items-center space-x-1">
+                                        <CheckCircle className="h-4 w-4" />
+                                        <span>Permanent URLs</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

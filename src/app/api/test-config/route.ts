@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
         // Validate required fields
         if (!github_token || !github_owner || !github_repo) {
             return NextResponse.json(
-                { 
+                {
                     error: 'Missing required GitHub configuration',
                     required_fields: ['github_token', 'github_owner', 'github_repo'],
                     optional_fields: ['github_branch']
@@ -30,20 +30,20 @@ export async function POST(request: NextRequest) {
 
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({}));
-            
+
             if (response.status === 401) {
                 return NextResponse.json(
-                    { 
+                    {
                         error: 'Invalid GitHub token',
                         message: 'The provided GitHub token is invalid or expired'
                     },
                     { status: 401 }
                 );
             }
-            
+
             if (response.status === 404) {
                 return NextResponse.json(
-                    { 
+                    {
                         error: 'Repository not found',
                         message: 'The repository does not exist or you do not have access to it'
                     },
@@ -52,7 +52,7 @@ export async function POST(request: NextRequest) {
             }
 
             return NextResponse.json(
-                { 
+                {
                     error: 'GitHub API error',
                     message: errorData.message || 'Unknown error',
                     status: response.status
@@ -62,7 +62,7 @@ export async function POST(request: NextRequest) {
         }
 
         const repoData = await response.json();
-        
+
         // Check if the branch exists
         const branchResponse = await fetch(`https://api.github.com/repos/${github_owner}/${github_repo}/branches/${github_branch}`, {
             headers: {
@@ -97,9 +97,9 @@ export async function POST(request: NextRequest) {
 
     } catch (error) {
         console.error('Test API error:', error);
-        
+
         return NextResponse.json(
-            { 
+            {
                 error: 'Test failed',
                 message: error instanceof Error ? error.message : 'Unknown error'
             },
@@ -121,7 +121,7 @@ export async function GET() {
                 description: 'GitHub personal access token with repo permissions'
             },
             github_owner: {
-                type: 'string', 
+                type: 'string',
                 required: true,
                 description: 'GitHub username or organization name'
             },

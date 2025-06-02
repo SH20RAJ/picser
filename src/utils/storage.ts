@@ -2,6 +2,14 @@ export interface UploadHistory {
     id: string;
     filename: string;
     url: string;
+    urls?: {
+        github: string;
+        raw: string;
+        jsdelivr: string;
+        github_commit: string;
+        raw_commit: string;
+        jsdelivr_commit: string;
+    };
     github_url?: string;
     uploadDate: string;
     size: number;

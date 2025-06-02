@@ -1,52 +1,83 @@
-# Picser - GitHub Image Upload & Hosting
+# 🚀 Picser - Free GitHub Image Hosting with jsDelivr CDN
 
-A modern Next.js 15 application for uploading images to GitHub repositories and getting multiple shareable URLs. Supports both personal use and public API access.
+> **Lightning-fast, self-hostable image hosting using GitHub repositories and jsDelivr CDN. Get permanent URLs that work forever, even if your repo gets deleted.**
 
-## Features
+![Picser Banner](https://cdn.jsdelivr.net/gh/yourusername/picser@main/public/banner.png)
 
-- 🖼️ **Drag & Drop Upload**: Easy image upload with drag and drop interface
-- 📸 **Image Preview**: See your image before and after upload
-- 🔗 **Multiple URL Types**: Get 6 different URL formats for each upload:
-  - GitHub blob URLs (branch-based & commit-based)
-  - Raw GitHub URLs (branch-based & commit-based)  
-  - JSDelivr CDN URLs (branch-based & commit-based)
-- 🌐 **Public API**: Allow external users to upload to their own repositories
-- 📋 **Copy URLs**: One-click copy of image URLs to clipboard
-- 📱 **Responsive Design**: Works on desktop and mobile devices
-- 🎨 **Modern UI**: Beautiful interface with Tailwind CSS
-- 📝 **Upload History**: Keep track of all your uploaded images
-- 🧪 **Configuration Testing**: Test GitHub setup before uploading
-- ⚡ **Edge Runtime**: Fast performance with Cloudflare Pages support
-- 📚 **API Documentation**: Complete API docs with interactive examples
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/picser)
+[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/yourusername/picser)
 
-## API Endpoints
+## ✨ Why Choose Picser?
 
-### 1. Personal Upload API
-- **Endpoint**: `POST /api/upload`
-- **Purpose**: Upload images using your configured GitHub repository
-- **Authentication**: Uses environment variables
+- **⚡ Lightning Fast**: Global jsDelivr CDN with 99.9% uptime and edge caching
+- **🔒 Permanent URLs**: Commit-based URLs work even if repository/files are deleted
+- **💰 Completely Free**: No limits, no subscriptions - just upload and share
+- **🛡️ Self-Hostable**: Deploy on your own infrastructure for full control
+- **🌍 Global CDN**: Images load instantly from 100+ edge locations worldwide
+- **📦 Git-Backed**: All images stored in Git with full version control
+- **🎨 Modern UI**: Beautiful glassmorphism interface built with Next.js 15 & Tailwind CSS
+- **📱 Responsive**: Works perfectly on desktop, tablet, and mobile devices
+- **🔄 Upload History**: Track all your uploads with smart URL management
+- **🏷️ Smart Badges**: Visual indicators for CDN status and URL permanence
 
-### 2. Public Upload API  
-- **Endpoint**: `POST /api/public-upload`
-- **Purpose**: Allow external users to upload to their own repositories
-- **Authentication**: Requires GitHub token in request
+## 🎯 Key Features
 
-### 3. Configuration Test API
-- **Endpoint**: `POST /api/test-config`
-- **Purpose**: Test GitHub configuration before uploading
-- **Returns**: Repository info, branch status, and permissions
+### 🖼️ **Smart Image Upload**
 
-## Supported File Types
+- Drag & drop interface with instant preview
+- Support for JPG, PNG, GIF, WebP (up to 10MB)
+- Automatic optimization and multiple URL formats
 
-- JPG/JPEG
-- PNG
-- GIF
-- WebP
-- Maximum file size: 10MB
+### ⚡ **jsDelivr CDN Integration**
 
-## Getting Started
+- **Primary Feature**: Commit-based CDN URLs for maximum performance
+- Global edge network with heavy caching
+- Permanent links that survive repository changes
+- 99.9% uptime guarantee
 
-First, install dependencies:
+### 🔗 **Multiple URL Types**
+
+1. **jsDelivr CDN (Permanent)** ⭐ *Recommended*
+   - `https://cdn.jsdelivr.net/gh/user/repo@commit/image.png`
+   - ✅ Lightning fast global CDN
+   - ✅ Heavy caching and edge optimization
+   - ✅ Permanent URLs (work even if repo deleted)
+
+2. **Raw GitHub (Permanent)**
+   - `https://raw.githubusercontent.com/user/repo/commit/image.png`
+   - ✅ Direct GitHub access
+   - ✅ Permanent commit-based URLs
+
+3. **jsDelivr CDN (Dynamic)**
+   - `https://cdn.jsdelivr.net/gh/user/repo@branch/image.png`
+   - ✅ CDN performance
+   - 📝 Updates with repository changes
+
+### 🌐 **Public API**
+
+- RESTful API for external integrations
+- Support for user-provided GitHub credentials
+- Comprehensive documentation with examples
+- Edge runtime for global performance
+
+### 📊 **Upload Management**
+
+- Visual upload history with thumbnails
+- One-click URL copying
+- Repository source links
+- File metadata tracking
+
+## 🚀 Quick Start
+
+### Option 1: One-Click Deploy
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/picser)
+
+[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/yourusername/picser)
+
+### Option 2: Manual Setup
+
+1. **Clone and Install**
 
 ```bash
 npm install
@@ -91,12 +122,14 @@ GITHUB_BRANCH=main
 ## Usage
 
 ### Personal Use
+
 1. Configure your `.env.local` with your GitHub repository details
-2. Visit `http://localhost:3000` 
+2. Visit `http://localhost:3000`
 3. Drag and drop an image or click to browse
 4. Get 6 different URL formats for your uploaded image
 
-### Public API Use  
+### Public API Use
+
 1. Visit `http://localhost:3000/api-docs` for complete API documentation
 2. Test your GitHub configuration at `/api/test-config`
 3. Use `/api/public-upload` to upload images to any GitHub repository
@@ -104,11 +137,13 @@ GITHUB_BRANCH=main
 ### URL Types Explained
 
 **Branch-based URLs** (may change if files are updated):
+
 - `github`: View file in GitHub web interface
 - `raw`: Direct access to raw file content  
 - `jsdelivr`: Fast CDN access with global caching
 
 **Commit-based URLs** (permanent, never change):
+
 - `github_commit`: Permanent link to specific commit version
 - `raw_commit`: Direct access to specific commit version
 - `jsdelivr_commit`: CDN access to specific commit version
@@ -116,6 +151,7 @@ GITHUB_BRANCH=main
 ## Deployment
 
 ### Cloudflare Pages
+
 This application is optimized for Cloudflare Pages with Edge Runtime:
 
 1. Connect your GitHub repository to Cloudflare Pages
@@ -125,6 +161,7 @@ This application is optimized for Cloudflare Pages with Edge Runtime:
 5. Deploy automatically on git push
 
 ### Vercel
+
 Deploy easily on Vercel:
 
 1. Connect your GitHub repository

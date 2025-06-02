@@ -7,7 +7,7 @@ export const runtime = "edge";
 export async function POST(request: NextRequest) {
     try {
         const formData = await request.formData();
-        
+
         // Get file and GitHub configuration from form data
         const file = formData.get('file') as File;
         const githubToken = formData.get('github_token') as string;
@@ -81,7 +81,7 @@ export async function POST(request: NextRequest) {
             github: `https://github.com/${githubOwner}/${githubRepo}/blob/${githubBranch}/${filename}`,
             raw: `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${githubBranch}/${filename}`,
             jsdelivr: `https://cdn.jsdelivr.net/gh/${githubOwner}/${githubRepo}@${githubBranch}/${filename}`,
-            
+
             // Commit-based URLs (permanent)
             github_commit: `https://github.com/${githubOwner}/${githubRepo}/blob/${commitSha}/${filename}`,
             raw_commit: `https://raw.githubusercontent.com/${githubOwner}/${githubRepo}/${commitSha}/${filename}`,
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
                     { status: 404 }
                 );
             }
-            
+
             return NextResponse.json(
                 { error: `Upload failed: ${error.message}` },
                 { status: 500 }
