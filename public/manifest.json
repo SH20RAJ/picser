@@ -1,0 +1,73 @@
+{
+    "name": "Picser - Free Image Hosting",
+    "short_name": "Picser",
+    "description": "Upload images up to 100MB and get instant shareable URLs with GitHub integration",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#3b82f6",
+    "orientation": "portrait-primary",
+    "scope": "/",
+    "lang": "en-US",
+    "categories": [
+        "utilities",
+        "productivity",
+        "photo"
+    ],
+    "icons": [
+        {
+            "src": "/icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/og/og-image.png",
+            "sizes": "1200x630",
+            "type": "image/png",
+            "form_factor": "wide",
+            "label": "Picser homepage showing upload interface"
+        }
+    ],
+    "features": [
+        "Upload images up to 100MB",
+        "Instant shareable URLs",
+        "GitHub-powered storage",
+        "Reliable CDN delivery",
+        "Free forever"
+    ],
+    "shortcuts": [
+        {
+            "name": "Upload Image",
+            "short_name": "Upload",
+            "description": "Quickly upload a new image",
+            "url": "/?action=upload",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "API Documentation",
+            "short_name": "API Docs",
+            "description": "View API documentation",
+            "url": "/api-docs",
+            "icons": [
+                {
+                    "src": "/icons/icon-192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}

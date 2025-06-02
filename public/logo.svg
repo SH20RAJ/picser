@@ -1,0 +1,8 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="256" cy="256" r="240" fill="#3b82f6" stroke="#1e40af" stroke-width="8"/>
+  <rect x="140" y="180" width="232" height="152" rx="16" fill="white" stroke="#1e40af" stroke-width="4"/>
+  <rect x="160" y="200" width="192" height="112" rx="8" fill="#e2e8f0"/>
+  <polygon points="160,300 200,260 240,280 280,240 320,260 352,312" fill="#94a3b8"/>
+  <circle cx="200" cy="230" r="12" fill="#fbbf24"/>
+  <text x="256" y="380" text-anchor="middle" font-family="Arial" font-size="32" font-weight="bold" fill="#1e40af">Picser</text>
+</svg>

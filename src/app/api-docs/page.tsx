@@ -144,7 +144,7 @@ print(result)
 
     const TabbedCodeExample = () => {
         const [activeTab, setActiveTab] = useState('curl');
-        
+
         const tabs = [
             { id: 'curl', label: 'cURL', language: 'bash', code: generateCurlExample() },
             { id: 'javascript', label: 'JavaScript', language: 'javascript', code: generateJavaScriptExample() },
@@ -160,17 +160,16 @@ print(result)
                         <button
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
-                            className={`px-6 py-4 text-sm font-medium transition-colors relative ${
-                                activeTab === tab.id
+                            className={`px-6 py-4 text-sm font-medium transition-colors relative ${activeTab === tab.id
                                     ? 'text-blue-600 bg-white border-b-2 border-blue-600'
                                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
-                            }`}
+                                }`}
                         >
                             {tab.label}
                         </button>
                     ))}
                 </div>
-                
+
                 {/* Tab Content */}
                 <div className="p-6">
                     {tabs.map((tab) => (
@@ -239,8 +238,8 @@ print(result)
                                     https://picser.pages.dev/api/public-upload
                                 </code>
                                 <p className="text-xs text-slate-500 mt-2">
-                                    ✅ Your credentials are used only for the upload<br/>
-                                    ✅ Nothing is stored on our servers<br/>
+                                    ✅ Your credentials are used only for the upload<br />
+                                    ✅ Nothing is stored on our servers<br />
                                     ✅ Direct GitHub API communication
                                 </p>
                             </div>
@@ -250,17 +249,17 @@ print(result)
                                     Deploy your own instance on Cloudflare Pages:
                                 </p>
                                 <div className="space-y-2">
-                                    <a 
-                                        href="https://github.com/sh20raj/picser" 
-                                        target="_blank" 
+                                    <a
+                                        href="https://github.com/sh20raj/picser"
+                                        target="_blank"
                                         className="inline-block text-xs bg-green-100 text-green-800 px-2 py-1 rounded hover:bg-green-200 transition-colors"
                                     >
                                         Fork GitHub Repository →
                                     </a>
                                 </div>
                                 <p className="text-xs text-slate-500 mt-2">
-                                    ✅ Complete privacy and control<br/>
-                                    ✅ Free Cloudflare Pages hosting<br/>
+                                    ✅ Complete privacy and control<br />
+                                    ✅ Free Cloudflare Pages hosting<br />
                                     ✅ Custom domain support
                                 </p>
                             </div>
@@ -305,7 +304,9 @@ print(result)
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">
-                                GitHub Token
+                                GitHub Token <Link
+                                    className='text-blue-600 hover:underline'
+                                    href={"https://docs.catalyst.zoho.com/en/tutorials/githubbot/java/generate-personal-access-token/"}>How to generate one</Link>
                             </label>
                             <input
                                 type="password"
@@ -369,7 +370,7 @@ print(result)
                 {/* API Endpoint */}
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-slate-200/50 mb-8">
                     <h2 className="text-2xl font-bold text-slate-900 mb-6">Upload Endpoint</h2>
-                    
+
                     <div className="grid md:grid-cols-2 gap-4 mb-6">
                         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                             <div className="flex items-center space-x-2 mb-2">

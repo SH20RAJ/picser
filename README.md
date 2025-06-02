@@ -135,6 +135,7 @@ curl -X POST \
 ```
 
 **🔒 Privacy & Security:**
+
 - Your credentials are used **only** for the upload request
 - **Nothing is stored** on our servers
 - Direct communication with GitHub API
@@ -145,7 +146,7 @@ curl -X POST \
 ### Option 2: Self-Host on Cloudflare Pages (Free)
 
 1. **Fork the repository**: [github.com/sh20raj/picser](https://github.com/sh20raj/picser)
-2. **Connect to Cloudflare Pages**: 
+2. **Connect to Cloudflare Pages**:
    - Visit [Cloudflare Pages](https://pages.cloudflare.com)
    - Connect your GitHub account
    - Select your forked repository
@@ -153,6 +154,7 @@ curl -X POST \
 4. **Optional**: Add your custom domain
 
 **Benefits of self-hosting:**
+
 - ✅ Complete privacy and control
 - ✅ Custom domain support
 - ✅ Free hosting on Cloudflare Pages
@@ -164,12 +166,14 @@ curl -X POST \
 ### 🌐 Using Hosted Version (Recommended)
 
 **Web Interface:**
+
 1. Visit [picser.pages.dev](https://picser.pages.dev)
 2. Enter your GitHub credentials in the form
 3. Drag and drop an image or click to browse
 4. Get instant CDN URLs with multiple formats
 
 **API Integration:**
+
 1. Visit [picser.pages.dev/api-docs](https://picser.pages.dev/api-docs) for complete documentation
 2. Use `https://picser.pages.dev/api/public-upload` endpoint
 3. Send your GitHub credentials with each request
@@ -178,12 +182,14 @@ curl -X POST \
 ### 🏠 Self-Hosted Development
 
 **Local Development:**
+
 1. Configure your `.env.local` with your GitHub repository details
 2. Run `npm run dev` and visit `http://localhost:3000`
 3. Drag and drop an image or click to browse
 4. Get 6 different URL formats for your uploaded image
 
 **API Documentation:**
+
 1. Visit `http://localhost:3000/api-docs` for complete API documentation
 2. Test your GitHub configuration at `/api/test-config`
 3. Use `/api/public-upload` to upload images to any GitHub repository
@@ -203,6 +209,7 @@ curl -X POST \
 ```
 
 **Response (JSON):**
+
 ```json
 {
   "success": true,
