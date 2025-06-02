@@ -1,0 +1,92 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { Octokit } from '@octokit/rest';
+
+const octokit = new Octokit({
+    auth: process.env.GITHUB_TOKEN,
+});
+
+export async function POST(request: NextRequest) {
+    try {
+        const formData = await request.formData();
+        const file = formData.get('file') as File;
+
+        if (!file) {
+            return NextResponse.json(
+                { error: 'No file provided' },
+                { status: 400 }
+            );
+        }
+
+        // Validate file type
+        if (!file.type.startsWith('image/')) {
+            return NextResponse.json(
+                { error: 'Only image files are allowed' },
+                { status: 400 }
+            );
+        }
+
+        // Validate file size (max 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            return NextResponse.json(
+                { error: 'File size must be less than 10MB' },
+                { status: 400 }
+            );
+        }
+
+        // Convert file to base64
+        const bytes = await file.arrayBuffer();
+        const buffer = Buffer.from(bytes);
+        const base64Content = buffer.toString('base64');
+
+        // Generate unique filename
+        const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+        const extension = file.name.split('.').pop() || 'jpg';
+        const filename = `uploads/${timestamp}-${Math.random().toString(36).substr(2, 9)}.${extension}`;
+
+        // Upload to GitHub
+        const response = await octokit.repos.createOrUpdateFileContents({
+            owner: process.env.GITHUB_OWNER!,
+            repo: process.env.GITHUB_REPO!,
+            path: filename,
+            message: `Upload image: ${file.name}`,
+            content: base64Content,
+            branch: process.env.GITHUB_BRANCH || 'main',
+        });
+
+        // Return the download URL
+        const downloadUrl = `https://raw.githubusercontent.com/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/${process.env.GITHUB_BRANCH || 'main'}/${filename}`;
+
+        return NextResponse.json({
+            success: true,
+            url: downloadUrl,
+            filename: filename,
+            size: file.size,
+            type: file.type,
+            github_url: response.data.content?.html_url,
+        });
+
+    } catch (error) {
+        console.error('Upload error:', error);
+
+        if (error instanceof Error) {
+            return NextResponse.json(
+                { error: `Upload failed: ${error.message}` },
+                { status: 500 }
+            );
+        }
+
+        return NextResponse.json(
+            { error: 'Upload failed: Unknown error' },
+            { status: 500 }
+        );
+    }
+}
+
+export async function GET() {
+    return NextResponse.json({
+        message: 'Image upload API endpoint',
+        methods: ['POST'],
+        maxFileSize: '10MB',
+        allowedTypes: ['image/*'],
+    });
+}
