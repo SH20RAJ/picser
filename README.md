@@ -2,7 +2,9 @@
 
 > **Lightning-fast, self-hostable image hosting using GitHub repositories and jsDelivr CDN. Get permanent URLs that work forever, even if your repo gets deleted.**
 
-![Picser Banner](https://cdn.jsdelivr.net/gh/sh20raj/picser@main/public/icons/icon-512x512.png)
+![Picser Banner](https://cdn.jsdelivr.net/gh/sh20raj/picser@main/public/og/og-image.png)
+
+[![GitHub Stars](https://img.shields.io/github/stars/sh20raj/picser?style=social)](
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sh20raj/picser)
 [![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sh20raj/picser)
