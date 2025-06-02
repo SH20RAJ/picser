@@ -3,6 +3,8 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { Copy, CheckCircle, Upload, Code, Github, Home, Zap, Shield, Globe } from 'lucide-react';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function APIDocumentation() {
     const [copiedCode, setCopiedCode] = useState<string | null>(null);
@@ -104,26 +106,85 @@ print(result)
     };
 
     const CodeBlock = ({ code, language, id }: { code: string; language: string; id: string }) => (
-        <div className="bg-slate-900 rounded-lg overflow-hidden">
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-800 border-b border-slate-700">
-                <span className="text-sm font-medium text-slate-300">{language}</span>
+        <div className="bg-slate-900 rounded-lg overflow-hidden border border-slate-700">
+            <div className="flex items-center justify-between px-4 py-3 bg-slate-800 border-b border-slate-700">
+                <span className="text-sm font-medium text-slate-300 capitalize">{language}</span>
                 <button
                     onClick={() => copyToClipboard(code, id)}
-                    className="flex items-center space-x-1 px-2 py-1 text-xs bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors"
+                    className="flex items-center space-x-2 px-3 py-1.5 text-xs bg-slate-700 text-slate-300 rounded hover:bg-slate-600 transition-colors"
                 >
                     {copiedCode === id ? (
-                        <CheckCircle className="h-3 w-3" />
+                        <CheckCircle className="h-4 w-4" />
                     ) : (
-                        <Copy className="h-3 w-3" />
+                        <Copy className="h-4 w-4" />
                     )}
-                    <span className="text-xs">{copiedCode === id ? 'Copied!' : 'Copy'}</span>
+                    <span>{copiedCode === id ? 'Copied!' : 'Copy Code'}</span>
                 </button>
             </div>
-            <pre className="p-4 text-sm text-slate-300 overflow-x-auto">
-                <code>{code}</code>
-            </pre>
+            <div className="relative">
+                <SyntaxHighlighter
+                    language={language}
+                    style={oneDark}
+                    customStyle={{
+                        margin: 0,
+                        padding: '1.5rem',
+                        background: 'transparent',
+                        fontSize: '0.875rem',
+                        lineHeight: '1.5'
+                    }}
+                    showLineNumbers={false}
+                    wrapLines={true}
+                    wrapLongLines={true}
+                >
+                    {code}
+                </SyntaxHighlighter>
+            </div>
         </div>
     );
+
+    const TabbedCodeExample = () => {
+        const [activeTab, setActiveTab] = useState('curl');
+        
+        const tabs = [
+            { id: 'curl', label: 'cURL', language: 'bash', code: generateCurlExample() },
+            { id: 'javascript', label: 'JavaScript', language: 'javascript', code: generateJavaScriptExample() },
+            { id: 'python', label: 'Python', language: 'python', code: generatePythonExample() },
+            { id: 'response', label: 'Response', language: 'json', code: JSON.stringify(exampleResponse, null, 2) }
+        ];
+
+        return (
+            <div className="bg-white/70 backdrop-blur-sm rounded-2xl border border-slate-200/50 overflow-hidden">
+                {/* Tab Navigation */}
+                <div className="flex border-b border-slate-200 bg-slate-50/50">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`px-6 py-4 text-sm font-medium transition-colors relative ${
+                                activeTab === tab.id
+                                    ? 'text-blue-600 bg-white border-b-2 border-blue-600'
+                                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100/50'
+                            }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
+                
+                {/* Tab Content */}
+                <div className="p-6">
+                    {tabs.map((tab) => (
+                        <div
+                            key={tab.id}
+                            className={activeTab === tab.id ? 'block' : 'hidden'}
+                        >
+                            <CodeBlock code={tab.code} language={tab.language} id={tab.id} />
+                        </div>
+                    ))}
+                </div>
+            </div>
+        );
+    };
 
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
@@ -381,27 +442,14 @@ print(result)
 
                 {/* Code Examples */}
                 <div className="space-y-8">
-                    <h2 className="text-2xl font-bold text-slate-900">Code Examples</h2>
-
-                    <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">cURL</h3>
-                        <CodeBlock code={generateCurlExample()} language="bash" id="curl" />
+                    <div className="text-center">
+                        <h2 className="text-3xl font-bold text-slate-900 mb-4">Code Examples</h2>
+                        <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+                            Ready-to-use code snippets in multiple programming languages. Click any tab to view examples and copy the code.
+                        </p>
                     </div>
 
-                    <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">JavaScript</h3>
-                        <CodeBlock code={generateJavaScriptExample()} language="javascript" id="javascript" />
-                    </div>
-
-                    <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Python</h3>
-                        <CodeBlock code={generatePythonExample()} language="python" id="python" />
-                    </div>
-
-                    <div>
-                        <h3 className="text-lg font-semibold text-slate-900 mb-4">Response</h3>
-                        <CodeBlock code={JSON.stringify(exampleResponse, null, 2)} language="json" id="response" />
-                    </div>
+                    <TabbedCodeExample />
                 </div>
 
                 {/* CTA */}
@@ -476,13 +524,14 @@ print(result)
                         <div className="text-center md:text-right">
                             <p className="text-sm text-slate-600">
                                 Built with ❤️ by{' '}
-                                <Link
-                                    href="https://github.com/sh20raj"
+                                <a
+                                    href="https://x.com/sh20raj"
                                     target="_blank"
+                                    rel="noopener noreferrer"
                                     className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
                                 >
                                     @sh20raj
-                                </Link>
+                                </a>
                             </p>
                             <p className="text-xs text-slate-500 mt-1">
                                 Open source • Self-hostable • Free forever

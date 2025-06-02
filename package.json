@@ -10,11 +10,13 @@
   },
   "dependencies": {
     "@octokit/rest": "^22.0.0",
+    "@types/react-syntax-highlighter": "^15.5.13",
     "lucide-react": "^0.511.0",
     "multer": "^2.0.0",
     "next": "15.3.3",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-syntax-highlighter": "^15.6.1"
   },
   "devDependencies": {
     "@cloudflare/next-on-pages": "^1.13.12",
