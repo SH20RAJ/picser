@@ -8,9 +8,18 @@ import { saveToHistory } from '@/utils/storage';
 interface UploadResult {
     success: boolean;
     url: string;
+    urls?: {
+        github: string;
+        raw: string;
+        jsdelivr: string;
+        github_commit: string;
+        raw_commit: string;
+        jsdelivr_commit: string;
+    };
     filename: string;
     size: number;
     type: string;
+    commit_sha?: string;
     github_url?: string;
     error?: string;
 }
@@ -251,42 +260,177 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
                     )}
 
                     <div className="space-y-4">
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">
-                                Image URL:
-                            </label>
-                            <div className="flex items-center space-x-2">
-                                <input
-                                    type="text"
-                                    value={uploadResult.url}
-                                    readOnly
-                                    className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
-                                />
-                                <button
-                                    onClick={() => copyToClipboard(uploadResult.url)}
-                                    className={`p-2 transition-colors ${copySuccess
-                                            ? 'text-green-600 hover:text-green-700'
-                                            : 'text-gray-500 hover:text-gray-700'
-                                        }`}
-                                    title={copySuccess ? "Copied!" : "Copy URL"}
-                                >
-                                    {copySuccess ? (
-                                        <CheckCircle className="h-4 w-4" />
-                                    ) : (
-                                        <Copy className="h-4 w-4" />
-                                    )}
-                                </button>
-                                <a
-                                    href={uploadResult.url}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
-                                    title="Open in new tab"
-                                >
-                                    <ExternalLink className="h-4 w-4" />
-                                </a>
+                        {uploadResult.urls ? (
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium text-gray-700 mb-3">Available URL Types:</h4>
+                                
+                                {/* Branch-based URLs */}
+                                <div className="border-l-4 border-blue-500 pl-3">
+                                    <h5 className="text-xs font-medium text-blue-700 mb-2">Branch-based URLs (may change)</h5>
+                                    
+                                    <div className="space-y-2">
+                                        <div>
+                                            <label className="block text-xs text-gray-600 mb-1">GitHub URL:</label>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={uploadResult.urls.github}
+                                                    readOnly
+                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
+                                                />
+                                                <button
+                                                    onClick={() => copyToClipboard(uploadResult.urls!.github)}
+                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                                    title="Copy GitHub URL"
+                                                >
+                                                    <Copy className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-xs text-gray-600 mb-1">Raw URL:</label>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={uploadResult.urls.raw}
+                                                    readOnly
+                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
+                                                />
+                                                <button
+                                                    onClick={() => copyToClipboard(uploadResult.urls!.raw)}
+                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                                    title="Copy Raw URL"
+                                                >
+                                                    <Copy className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-xs text-gray-600 mb-1">JSDelivr CDN URL:</label>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={uploadResult.urls.jsdelivr}
+                                                    readOnly
+                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
+                                                />
+                                                <button
+                                                    onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr)}
+                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                                    title="Copy JSDelivr URL"
+                                                >
+                                                    <Copy className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Commit-based URLs */}
+                                <div className="border-l-4 border-green-500 pl-3">
+                                    <h5 className="text-xs font-medium text-green-700 mb-2">Commit-based URLs (permanent)</h5>
+                                    
+                                    <div className="space-y-2">
+                                        <div>
+                                            <label className="block text-xs text-gray-600 mb-1">GitHub URL (Commit):</label>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={uploadResult.urls.github_commit}
+                                                    readOnly
+                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
+                                                />
+                                                <button
+                                                    onClick={() => copyToClipboard(uploadResult.urls!.github_commit)}
+                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                                    title="Copy GitHub Commit URL"
+                                                >
+                                                    <Copy className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-xs text-gray-600 mb-1">Raw URL (Commit):</label>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={uploadResult.urls.raw_commit}
+                                                    readOnly
+                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
+                                                />
+                                                <button
+                                                    onClick={() => copyToClipboard(uploadResult.urls!.raw_commit)}
+                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                                    title="Copy Raw Commit URL"
+                                                >
+                                                    <Copy className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                        
+                                        <div>
+                                            <label className="block text-xs text-gray-600 mb-1">JSDelivr CDN URL (Commit):</label>
+                                            <div className="flex items-center space-x-2">
+                                                <input
+                                                    type="text"
+                                                    value={uploadResult.urls.jsdelivr_commit}
+                                                    readOnly
+                                                    className="flex-1 px-2 py-1 border border-gray-300 rounded text-xs bg-gray-50"
+                                                />
+                                                <button
+                                                    onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr_commit)}
+                                                    className="p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                                                    title="Copy JSDelivr Commit URL"
+                                                >
+                                                    <Copy className="h-3 w-3" />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
+                        ) : (
+                            // Fallback for old format
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">
+                                    Image URL:
+                                </label>
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="text"
+                                        value={uploadResult.url}
+                                        readOnly
+                                        className="flex-1 px-3 py-2 border border-gray-300 rounded-md bg-gray-50 text-sm"
+                                    />
+                                    <button
+                                        onClick={() => copyToClipboard(uploadResult.url)}
+                                        className={`p-2 transition-colors ${copySuccess
+                                                ? 'text-green-600 hover:text-green-700'
+                                                : 'text-gray-500 hover:text-gray-700'
+                                            }`}
+                                        title={copySuccess ? "Copied!" : "Copy URL"}
+                                    >
+                                        {copySuccess ? (
+                                            <CheckCircle className="h-4 w-4" />
+                                        ) : (
+                                            <Copy className="h-4 w-4" />
+                                        )}
+                                    </button>
+                                    <a
+                                        href={uploadResult.url}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="p-2 text-gray-500 hover:text-gray-700 transition-colors"
+                                        title="Open in new tab"
+                                    >
+                                        <ExternalLink className="h-4 w-4" />
+                                    </a>
+                                </div>
+                            </div>
+                        )}
 
                         <div className="grid grid-cols-2 gap-4 text-sm">
                             <div>

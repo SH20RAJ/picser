@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Octokit } from '@octokit/rest';
 
+export const runtime = "edge";
+
+
 const octokit = new Octokit({
     auth: process.env.GITHUB_TOKEN,
 });
@@ -53,15 +56,32 @@ export async function POST(request: NextRequest) {
             branch: process.env.GITHUB_BRANCH || 'main',
         });
 
-        // Return the download URL
-        const downloadUrl = `https://raw.githubusercontent.com/${process.env.GITHUB_OWNER}/${process.env.GITHUB_REPO}/${process.env.GITHUB_BRANCH || 'main'}/${filename}`;
+        const owner = process.env.GITHUB_OWNER!;
+        const repo = process.env.GITHUB_REPO!;
+        const branch = process.env.GITHUB_BRANCH || 'main';
+        const commitSha = response.data.commit.sha;
+
+        // Generate all URL types
+        const urls = {
+            // Branch-based URLs
+            github: `https://github.com/${owner}/${repo}/blob/${branch}/${filename}`,
+            raw: `https://raw.githubusercontent.com/${owner}/${repo}/${branch}/${filename}`,
+            jsdelivr: `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${branch}/${filename}`,
+            
+            // Commit-based URLs (permanent)
+            github_commit: `https://github.com/${owner}/${repo}/blob/${commitSha}/${filename}`,
+            raw_commit: `https://raw.githubusercontent.com/${owner}/${repo}/${commitSha}/${filename}`,
+            jsdelivr_commit: `https://cdn.jsdelivr.net/gh/${owner}/${repo}@${commitSha}/${filename}`,
+        };
 
         return NextResponse.json({
             success: true,
-            url: downloadUrl,
+            url: urls.raw, // Default URL for backward compatibility
+            urls: urls,
             filename: filename,
             size: file.size,
             type: file.type,
+            commit_sha: commitSha,
             github_url: response.data.content?.html_url,
         });
 
