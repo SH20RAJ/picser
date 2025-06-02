@@ -39,10 +39,10 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Validate file size (max 10MB)
-        if (file.size > 10 * 1024 * 1024) {
+        // Validate file size (max 100MB)
+        if (file.size > 100 * 1024 * 1024) {
             return NextResponse.json(
-                { error: 'File size must be less than 10MB' },
+                { error: 'File size must be less than 100MB' },
                 { status: 400 }
             );
         }
@@ -149,7 +149,7 @@ export async function GET() {
                 type: 'File',
                 required: true,
                 description: 'Image file to upload (JPG, PNG, GIF, WebP)',
-                maxSize: '10MB'
+                maxSize: '100MB'
             },
             github_token: {
                 type: 'string',

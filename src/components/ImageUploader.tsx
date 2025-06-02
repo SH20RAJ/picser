@@ -274,7 +274,7 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
                                                 type="text"
                                                 value={uploadResult.urls.raw_commit}
                                                 readOnly
-                                                className="flex-1 px-3 py-2 border border-slate-300 rounded text-xs bg-white font-mono"
+                                                className="flex-1 px-3 py-2 border text-amber-950 border-slate-300 rounded text-xs bg-white font-mono"
                                             />
                                             <button
                                                 onClick={() => copyToClipboard(uploadResult.urls!.raw_commit)}
@@ -302,7 +302,7 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
                                                 type="text"
                                                 value={uploadResult.urls.jsdelivr}
                                                 readOnly
-                                                className="flex-1 px-3 py-2 border border-slate-300 rounded text-xs bg-white font-mono"
+                                                className="flex-1 px-3 py-2 border text-amber-950 border-slate-300 rounded text-xs bg-white font-mono"
                                             />
                                             <button
                                                 onClick={() => copyToClipboard(uploadResult.urls!.jsdelivr)}
@@ -330,7 +330,7 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
                                                 type="text"
                                                 value={uploadResult.urls.github_commit}
                                                 readOnly
-                                                className="flex-1 px-3 py-2 border border-slate-300 rounded text-xs bg-white font-mono"
+                                                className="flex-1 px-3 py-2 border text-amber-950 border-slate-300 rounded text-xs bg-white font-mono"
                                             />
                                             <button
                                                 onClick={() => copyToClipboard(uploadResult.urls!.github_commit)}
@@ -417,7 +417,7 @@ export default function ImageUploader({ onUpload }: ImageUploaderProps = {}) {
                                         {isDragging ? 'Drop your image here' : 'Drag & drop or click to upload'}
                                     </h3>
                                     <p className="text-slate-600">
-                                        Supports JPG, PNG, GIF, WebP up to 10MB
+                                        Supports JPG, PNG, GIF, WebP up to 100MB
                                     </p>
                                 </div>
 

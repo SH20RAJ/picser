@@ -4,8 +4,8 @@
 
 ![Picser Banner](https://cdn.jsdelivr.net/gh/yourusername/picser@main/public/banner.png)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/picser)
-[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/yourusername/picser)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sh20raj/picser)
+[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sh20raj/picser)
 
 ## ✨ Why Choose Picser?
 
@@ -25,7 +25,7 @@
 ### 🖼️ **Smart Image Upload**
 
 - Drag & drop interface with instant preview
-- Support for JPG, PNG, GIF, WebP (up to 10MB)
+- Support for JPG, PNG, GIF, WebP (up to 100MB)
 - Automatic optimization and multiple URL formats
 
 ### ⚡ **jsDelivr CDN Integration**
@@ -71,9 +71,9 @@
 
 ### Option 1: One-Click Deploy
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/picser)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sh20raj/picser)
 
-[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/yourusername/picser)
+[![Deploy to Cloudflare Pages](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sh20raj/picser)
 
 ### Option 2: Manual Setup
 
@@ -119,20 +119,106 @@ GITHUB_BRANCH=main
    - `repo` (Full control of private repositories)
 5. Copy the token to your `.env.local` file
 
+## 🚀 Quick Start Options
+
+### Option 1: Use Hosted Version (Easiest) ⭐
+
+**No setup required!** Use our hosted version directly:
+
+```bash
+curl -X POST \
+  -F "file=@/path/to/your/image.png" \
+  -F "github_token=ghp_your_token_here" \
+  -F "github_owner=your_username" \
+  -F "github_repo=your_repo" \
+  https://picser.pages.dev/api/public-upload
+```
+
+**🔒 Privacy & Security:**
+- Your credentials are used **only** for the upload request
+- **Nothing is stored** on our servers
+- Direct communication with GitHub API
+- Completely stateless and secure
+
+**🌐 Web Interface:** Visit [picser.pages.dev](https://picser.pages.dev) for drag-and-drop uploads!
+
+### Option 2: Self-Host on Cloudflare Pages (Free)
+
+1. **Fork the repository**: [github.com/sh20raj/picser](https://github.com/sh20raj/picser)
+2. **Connect to Cloudflare Pages**: 
+   - Visit [Cloudflare Pages](https://pages.cloudflare.com)
+   - Connect your GitHub account
+   - Select your forked repository
+3. **Deploy**: Cloudflare will automatically build and deploy
+4. **Optional**: Add your custom domain
+
+**Benefits of self-hosting:**
+- ✅ Complete privacy and control
+- ✅ Custom domain support
+- ✅ Free hosting on Cloudflare Pages
+- ✅ Global CDN included
+- ✅ Automatic deployments from GitHub
+
 ## Usage
 
-### Personal Use
+### 🌐 Using Hosted Version (Recommended)
 
+**Web Interface:**
+1. Visit [picser.pages.dev](https://picser.pages.dev)
+2. Enter your GitHub credentials in the form
+3. Drag and drop an image or click to browse
+4. Get instant CDN URLs with multiple formats
+
+**API Integration:**
+1. Visit [picser.pages.dev/api-docs](https://picser.pages.dev/api-docs) for complete documentation
+2. Use `https://picser.pages.dev/api/public-upload` endpoint
+3. Send your GitHub credentials with each request
+4. Get 6 different URL formats for your uploaded image
+
+### 🏠 Self-Hosted Development
+
+**Local Development:**
 1. Configure your `.env.local` with your GitHub repository details
-2. Visit `http://localhost:3000`
+2. Run `npm run dev` and visit `http://localhost:3000`
 3. Drag and drop an image or click to browse
 4. Get 6 different URL formats for your uploaded image
 
-### Public API Use
-
+**API Documentation:**
 1. Visit `http://localhost:3000/api-docs` for complete API documentation
 2. Test your GitHub configuration at `/api/test-config`
 3. Use `/api/public-upload` to upload images to any GitHub repository
+
+## 💡 Quick Example
+
+**Upload an image using the hosted API:**
+
+```bash
+# Replace with your actual GitHub credentials
+curl -X POST \
+  -F "file=@screenshot.png" \
+  -F "github_token=ghp_your_github_token" \
+  -F "github_owner=your_username" \
+  -F "github_repo=your_repo" \
+  https://picser.pages.dev/api/public-upload
+```
+
+**Response (JSON):**
+```json
+{
+  "success": true,
+  "filename": "screenshot-1704123456789.png",
+  "url": "https://cdn.jsdelivr.net/gh/user/repo@abc123/uploads/screenshot-1704123456789.png",
+  "urls": {
+    "jsdelivr_commit": "https://cdn.jsdelivr.net/gh/user/repo@abc123/uploads/screenshot-1704123456789.png",
+    "raw_commit": "https://raw.githubusercontent.com/user/repo/abc123/uploads/screenshot-1704123456789.png",
+    "github_commit": "https://github.com/user/repo/blob/abc123/uploads/screenshot-1704123456789.png"
+  },
+  "size": 142857,
+  "type": "image/png"
+}
+```
+
+**✨ That's it!** Your image is now available globally via jsDelivr CDN with a permanent URL.
 
 ### URL Types Explained
 

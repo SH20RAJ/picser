@@ -34,7 +34,10 @@ export default function APIDocumentation() {
   -F "github_repo=${formData.githubRepo}" \\
   -F "github_branch=${formData.githubBranch}" \\
   -F "folder=${formData.folder}" \\
-  ${baseUrl}/api/public-upload`;
+  ${baseUrl}/api/public-upload
+
+# Or use the hosted version directly:
+# https://picser.pages.dev/api/public-upload`;
     };
 
     const generateJavaScriptExample = () => {
@@ -47,13 +50,17 @@ formData.append('github_repo', '${formData.githubRepo}');
 formData.append('github_branch', '${formData.githubBranch}');
 formData.append('folder', '${formData.folder}');
 
+// Use your own instance or the hosted version
 const response = await fetch('${baseUrl}/api/public-upload', {
   method: 'POST',
   body: formData
 });
 
 const result = await response.json();
-console.log(result);`;
+console.log(result);
+
+// Or use hosted version directly:
+// const response = await fetch('https://picser.pages.dev/api/public-upload', {...});`;
     };
 
     const generatePythonExample = () => {
@@ -69,9 +76,13 @@ data = {
     'folder': '${formData.folder}'
 }
 
+# Use your own instance or the hosted version
 response = requests.post('${baseUrl}/api/public-upload', files=files, data=data)
 result = response.json()
-print(result)`;
+print(result)
+
+# Or use hosted version directly:
+# response = requests.post('https://picser.pages.dev/api/public-upload', files=files, data=data)`;
     };
 
     const exampleResponse = {
@@ -150,9 +161,50 @@ print(result)`;
                     <h1 className="text-4xl font-bold text-slate-900 mb-4">
                         Picser API Documentation
                     </h1>
-                    <p className="text-xl text-slate-600 max-w-2xl mx-auto">
+                    <p className="text-xl text-slate-600 max-w-2xl mx-auto mb-8">
                         Upload images to GitHub and get instant CDN URLs via jsDelivr. Perfect for developers who need reliable image hosting.
                     </p>
+
+                    {/* Deployment Options */}
+                    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-200 mb-8">
+                        <h2 className="text-lg font-bold text-slate-900 mb-4">🚀 Two Ways to Use Picser</h2>
+                        <div className="grid md:grid-cols-2 gap-6 text-left">
+                            <div className="bg-white/60 rounded-xl p-4">
+                                <h3 className="font-semibold text-blue-700 mb-2">📡 Use Hosted Version</h3>
+                                <p className="text-sm text-slate-600 mb-3">
+                                    Send requests directly to our hosted API endpoint:
+                                </p>
+                                <code className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded font-mono">
+                                    https://picser.pages.dev/api/public-upload
+                                </code>
+                                <p className="text-xs text-slate-500 mt-2">
+                                    ✅ Your credentials are used only for the upload<br/>
+                                    ✅ Nothing is stored on our servers<br/>
+                                    ✅ Direct GitHub API communication
+                                </p>
+                            </div>
+                            <div className="bg-white/60 rounded-xl p-4">
+                                <h3 className="font-semibold text-green-700 mb-2">🏠 Self-Host for Free</h3>
+                                <p className="text-sm text-slate-600 mb-3">
+                                    Deploy your own instance on Cloudflare Pages:
+                                </p>
+                                <div className="space-y-2">
+                                    <a 
+                                        href="https://github.com/sh20raj/picser" 
+                                        target="_blank" 
+                                        className="inline-block text-xs bg-green-100 text-green-800 px-2 py-1 rounded hover:bg-green-200 transition-colors"
+                                    >
+                                        Fork GitHub Repository →
+                                    </a>
+                                </div>
+                                <p className="text-xs text-slate-500 mt-2">
+                                    ✅ Complete privacy and control<br/>
+                                    ✅ Free Cloudflare Pages hosting<br/>
+                                    ✅ Custom domain support
+                                </p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Features */}
@@ -188,7 +240,7 @@ print(result)`;
 
                 {/* Configuration Form */}
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-slate-200/50 mb-12">
-                    <h2 className="text-2xl font-bold text-slate-900 mb-6">API Configuration</h2>
+                    <h2 className="text-2xl font-bold text-slate-900 mb-6">API Configuration (Playground)</h2>
                     <div className="grid md:grid-cols-2 gap-6">
                         <div>
                             <label className="block text-sm font-medium text-slate-700 mb-2">
@@ -199,7 +251,7 @@ print(result)`;
                                 value={formData.githubToken}
                                 onChange={(e) => setFormData({ ...formData, githubToken: e.target.value })}
                                 placeholder="ghp_xxxxxxxxxxxx"
-                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border text-amber-950 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
                         <div>
@@ -211,7 +263,7 @@ print(result)`;
                                 value={formData.githubOwner}
                                 onChange={(e) => setFormData({ ...formData, githubOwner: e.target.value })}
                                 placeholder="sh20raj"
-                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border text-amber-950 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
                         <div>
@@ -223,7 +275,7 @@ print(result)`;
                                 value={formData.githubRepo}
                                 onChange={(e) => setFormData({ ...formData, githubRepo: e.target.value })}
                                 placeholder="picser"
-                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border text-amber-950 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
                         <div>
@@ -235,7 +287,7 @@ print(result)`;
                                 value={formData.githubBranch}
                                 onChange={(e) => setFormData({ ...formData, githubBranch: e.target.value })}
                                 placeholder="main"
-                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border text-amber-950 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
                         <div className="md:col-span-2">
@@ -247,7 +299,7 @@ print(result)`;
                                 value={formData.folder}
                                 onChange={(e) => setFormData({ ...formData, folder: e.target.value })}
                                 placeholder="uploads"
-                                className="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                className="w-full px-4 py-3 border text-amber-950 border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             />
                         </div>
                     </div>
@@ -256,10 +308,21 @@ print(result)`;
                 {/* API Endpoint */}
                 <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 border border-slate-200/50 mb-8">
                     <h2 className="text-2xl font-bold text-slate-900 mb-6">Upload Endpoint</h2>
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                        <div className="flex items-center space-x-2">
-                            <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">POST</span>
-                            <code className="text-blue-900 font-mono text-sm">/api/public-upload</code>
+                    
+                    <div className="grid md:grid-cols-2 gap-4 mb-6">
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <span className="bg-blue-600 text-white px-2 py-1 rounded text-sm font-medium">POST</span>
+                                <code className="text-blue-900 font-mono text-sm">/api/public-upload</code>
+                            </div>
+                            <p className="text-xs text-blue-700">Your own instance</p>
+                        </div>
+                        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                            <div className="flex items-center space-x-2 mb-2">
+                                <span className="bg-green-600 text-white px-2 py-1 rounded text-sm font-medium">POST</span>
+                                <code className="text-green-900 font-mono text-sm">picser.pages.dev/api/public-upload</code>
+                            </div>
+                            <p className="text-xs text-green-700">Hosted version (recommended)</p>
                         </div>
                     </div>
 
@@ -279,7 +342,7 @@ print(result)`;
                                     <td className="py-3 pr-4 text-slate-900 font-mono">file</td>
                                     <td className="py-3 pr-4 text-slate-600">File</td>
                                     <td className="py-3 pr-4 text-red-600">Yes</td>
-                                    <td className="py-3 text-slate-600">Image file to upload</td>
+                                    <td className="py-3 text-slate-600">Image file to upload (JPG, PNG, GIF, WebP, max 100MB)</td>
                                 </tr>
                                 <tr>
                                     <td className="py-3 pr-4 text-slate-900 font-mono">github_token</td>
@@ -369,6 +432,80 @@ print(result)`;
                     </div>
                 </div>
             </div>
+
+            <footer className="bg-white/80 backdrop-blur-md border-t border-slate-200/50 mt-16">
+                <div className="container mx-auto px-6 py-8">
+                    <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+                        {/* Left Side - Brand */}
+                        <div className="flex items-center space-x-3">
+                            <div className="relative">
+                                <Github className="h-6 w-6 text-blue-600" />
+                                <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></div>
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-slate-900">Picser</h3>
+                                <p className="text-xs text-slate-500">Free GitHub Image Hosting</p>
+                            </div>
+                        </div>
+
+                        {/* Center - Links */}
+                        <div className="flex items-center space-x-6 text-sm">
+                            <Link
+                                href="/api-docs"
+                                className="text-slate-600 hover:text-blue-600 transition-colors font-medium"
+                            >
+                                API Docs
+                            </Link>
+                            <Link
+                                href="https://github.com/sh20raj/picser"
+                                target="_blank"
+                                className="text-slate-600 hover:text-blue-600 transition-colors font-medium"
+                            >
+                                GitHub
+                            </Link>
+                            <Link
+                                href="https://jsdelivr.com"
+                                target="_blank"
+                                className="text-slate-600 hover:text-blue-600 transition-colors font-medium"
+                            >
+                                jsDelivr CDN
+                            </Link>
+                        </div>
+
+                        {/* Right Side - Attribution */}
+                        <div className="text-center md:text-right">
+                            <p className="text-sm text-slate-600">
+                                Built with ❤️ by{' '}
+                                <Link
+                                    href="https://github.com/sh20raj"
+                                    target="_blank"
+                                    className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                                >
+                                    @sh20raj
+                                </Link>
+                            </p>
+                            <p className="text-xs text-slate-500 mt-1">
+                                Open source • Self-hostable • Free forever
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Bottom Line */}
+                    <div className="border-t border-slate-200/50 mt-6 pt-6">
+                        <div className="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0 text-xs text-slate-500">
+                            <p>© 2025 Picser. Made with Next.js 15, TypeScript & Tailwind CSS.</p>
+                            <div className="flex items-center space-x-4">
+                                <span className="flex items-center space-x-1">
+                                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                                    <span>All systems operational</span>
+                                </span>
+                                <span>Powered by jsDelivr CDN</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+
         </div>
     );
 }

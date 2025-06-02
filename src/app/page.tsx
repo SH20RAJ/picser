@@ -77,7 +77,7 @@ export default function Home() {
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-200">
                 <Shield className="h-8 w-8 text-green-600 mx-auto mb-3" />
                 <h3 className="font-semibold text-slate-900 mb-2">Permanent URLs</h3>
-                <p className="text-sm text-slate-600">Commit-based URLs work even if repo/files are deleted</p>
+                <p className="text-sm text-slate-600">jsDelivr Commit-based URLs work even if repo/files are deleted*</p>
               </div>
               <div className="bg-white/60 backdrop-blur-sm rounded-xl p-6 border border-slate-200/50 shadow-sm hover:shadow-md transition-all duration-200">
                 <Globe className="h-8 w-8 text-purple-600 mx-auto mb-3" />
@@ -95,6 +95,80 @@ export default function Home() {
           <UploadHistory key={refreshHistory} onNewUpload={() => setRefreshHistory(prev => prev + 1)} />
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="bg-white/80 backdrop-blur-md border-t border-slate-200/50 mt-16">
+        <div className="container mx-auto px-6 py-8">
+          <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+            {/* Left Side - Brand */}
+            <div className="flex items-center space-x-3">
+              <div className="relative">
+                <Github className="h-6 w-6 text-blue-600" />
+                <div className="absolute -top-1 -right-1 w-2 h-2 bg-green-500 rounded-full"></div>
+              </div>
+              <div>
+                <h3 className="font-bold text-slate-900">Picser</h3>
+                <p className="text-xs text-slate-500">Free GitHub Image Hosting</p>
+              </div>
+            </div>
+
+            {/* Center - Links */}
+            <div className="flex items-center space-x-6 text-sm">
+              <Link
+                href="/api-docs"
+                className="text-slate-600 hover:text-blue-600 transition-colors font-medium"
+              >
+                API Docs
+              </Link>
+              <Link
+                href="https://github.com/sh20raj/picser"
+                target="_blank"
+                className="text-slate-600 hover:text-blue-600 transition-colors font-medium"
+              >
+                GitHub
+              </Link>
+              <Link
+                href="https://jsdelivr.com"
+                target="_blank"
+                className="text-slate-600 hover:text-blue-600 transition-colors font-medium"
+              >
+                jsDelivr CDN
+              </Link>
+            </div>
+
+            {/* Right Side - Attribution */}
+            <div className="text-center md:text-right">
+              <p className="text-sm text-slate-600">
+                Built with ❤️ by{' '}
+                <Link
+                  href="https://github.com/sh20raj"
+                  target="_blank"
+                  className="text-blue-600 hover:text-blue-700 font-medium transition-colors"
+                >
+                  @sh20raj
+                </Link>
+              </p>
+              <p className="text-xs text-slate-500 mt-1">
+                Open source • Self-hostable • Free forever
+              </p>
+            </div>
+          </div>
+
+          {/* Bottom Line */}
+          <div className="border-t border-slate-200/50 mt-6 pt-6">
+            <div className="flex flex-col md:flex-row items-center justify-between space-y-2 md:space-y-0 text-xs text-slate-500">
+              <p>© 2025 Picser. Made with Next.js 15, TypeScript & Tailwind CSS.</p>
+              <div className="flex items-center space-x-4">
+                <span className="flex items-center space-x-1">
+                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  <span>All systems operational</span>
+                </span>
+                <span>Powered by jsDelivr CDN</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
